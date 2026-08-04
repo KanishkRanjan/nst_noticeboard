@@ -129,6 +129,17 @@ export default function LoginForm({
           />
         </div>
 
+        {/* Submit Button */}
+        <div className="pt-2">
+          <button
+            type="submit"
+            disabled={isLoadingCredentials}
+            className="w-full px-4 py-3 text-sm font-semibold text-white bg-[#0673f9] hover:bg-[#0560d0] active:bg-[#044eb0] rounded-[5px] shadow-md transition active:scale-[0.99] cursor-pointer disabled:opacity-50"
+          >
+            {isLoadingCredentials ? "Signing in..." : "Continue"}
+          </button>
+        </div>
+
         {/* OR Divider */}
         <div className="relative my-6">
           <div className="absolute inset-0 flex items-center">
@@ -177,17 +188,6 @@ export default function LoginForm({
             <span>
               {isLoadingGoogle ? "Signing in..." : "Sign in with Google"}
             </span>
-          </button>
-        </div>
-
-        {/* Submit Button */}
-        <div className="pt-2">
-          <button
-            type="submit"
-            disabled={isLoadingCredentials}
-            className="w-full px-4 py-3 text-sm font-semibold text-white bg-[#0673f9] hover:bg-[#0560d0] active:bg-[#044eb0] rounded-[5px] shadow-md transition active:scale-[0.99] cursor-pointer disabled:opacity-50"
-          >
-            {isLoadingCredentials ? "Signing in..." : "Continue"}
           </button>
         </div>
       </form>
