@@ -108,7 +108,7 @@ export default function UFMPolicyClient({
     <div className="bg-[#FAF9F6] min-h-screen font-sans antialiased text-[#0d0e12] pb-24">
       {/* Top Header Navigation */}
       <header className="sticky top-0 z-40 bg-white border-b border-[#E6E2D8] px-4 sm:px-8 md:px-12 py-4">
-        <div className="max-w-[1240px] mx-auto flex items-center justify-between">
+        <div className="max-w-310 mx-auto flex items-center justify-between">
           {/* Back button */}
           {onBack ? (
             <button
@@ -143,7 +143,7 @@ export default function UFMPolicyClient({
       </header>
 
       {/* Main Container Layout */}
-      <div className="max-w-[1240px] mx-auto px-4 sm:px-8 md:px-12 mt-10">
+      <div className="max-w-310 mx-auto px-4 sm:px-8 md:px-12 mt-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
           
           {/* Left Column - Policy List Sidebar */}
