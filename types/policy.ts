@@ -11,3 +11,5 @@ export interface IPolicy {
   updatedAt: Date | string;
   createdAt: Date | string;
 }
+
+export type Policy = IPolicy;

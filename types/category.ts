@@ -7,3 +7,5 @@ export interface ICategory {
   icon: string;
   color: string
 }
+
+export type Category = ICategory;
