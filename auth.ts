@@ -6,7 +6,7 @@ import Google from "next-auth/providers/google";
 import Credentials from "next-auth/providers/credentials";
 import type { Provider } from "next-auth/providers";
 import bcrypt from "bcryptjs";
-import { UserDocument, User } from "./types/user";
+import { UserDocument, User, UserRole } from "./types/user";
 
 const providers: Provider[] = [
   Google({
@@ -76,6 +76,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: MongoDBAdapter(client),
   providers,
   secret: process.env.AUTH_SECRET || process.env.BETTER_AUTH_SECRET,
+  session: {
+    strategy: "jwt",
+  },
   callbacks: {
     async signIn({ account, profile }) {
       if (account?.provider === "google") {
@@ -95,9 +98,20 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       return true;
     },
 
-    async session({ session, user }) {
-      if (session.user && user) {
-        session.user.role = (user as User).role || "user";
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+        token.role = (user as User).role || "user";
+      }
+      return token;
+    },
+
+    async session({ session, token }) {
+      if (session.user && token) {
+        session.user.role = (token.role as UserRole) || "user";
+        if (token.id) {
+          session.user.id = token.id as string;
+        }
       }
       return session;
     },
@@ -107,3 +121,4 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     error: "/signin?error=AccessDenied",
   },
 });
+
