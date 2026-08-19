@@ -10,6 +10,7 @@ import { UserDocument, User, UserRole } from "./types/user";
 
 const providers: Provider[] = [
   Google({
+    allowDangerousEmailAccountLinking: true,
     profile(profile) {
       return {
         id: profile.sub,
@@ -80,22 +81,22 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     strategy: "jwt",
   },
   callbacks: {
-    async signIn({ account, profile }) {
-      if (account?.provider === "google") {
-        if (!profile?.email) return false;
+    async signIn({ user, account, profile }) {
+      if (account?.provider === "credentials") return true;
 
-        const db = await getDb();
-        const existingUser = await db
-          .collection<UserDocument>("users")
-          .findOne({
-            email: profile.email.toLowerCase(),
-          });
-
-        if (!existingUser) {
-          return false;
-        }
+      if (account?.provider === "google" && profile?.email_verified !== true) {
+        return false;
       }
-      return true;
+
+      const email = (profile?.email ?? user.email)?.toLowerCase();
+      if (!email) return false;
+
+      const db = await getDb();
+      const existingUser = await db
+        .collection<UserDocument>("users")
+        .findOne({ email });
+
+      return Boolean(existingUser);
     },
 
     async jwt({ token, user }) {
@@ -109,8 +110,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     async session({ session, token }) {
       if (session.user && token) {
         session.user.role = (token.role as UserRole) || "user";
-        if (token.id) {
-          session.user.id = token.id as string;
+        const id = (token.id as string | undefined) ?? token.sub;
+        if (id) {
+          session.user.id = id;
         }
       }
       return session;
@@ -118,7 +120,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   },
   pages: {
     signIn: "/signin",
-    error: "/signin?error=AccessDenied",
+    error: "/signin",
   },
 });
 
